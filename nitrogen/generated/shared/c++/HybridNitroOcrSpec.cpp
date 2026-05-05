@@ -15,6 +15,7 @@ namespace margelo::nitro::nitroocr {
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridMethod("recognize", &HybridNitroOcrSpec::recognize);
+      prototype.registerHybridMethod("recognizeImage", &HybridNitroOcrSpec::recognizeImage);
     });
   }
 

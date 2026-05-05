@@ -54,9 +54,25 @@ export interface OcrResult {
 }
 
 /**
- * Nitro HybridObject that runs MLKit Text Recognition synchronously on a
- * single vision-camera v5 frame. Invoke from inside a `useFrameOutput` worklet.
+ * Optional orientation hint for still images. Omit it for already-upright
+ * cropped images. Camera-style values are accepted so callers can forward
+ * existing orientation metadata without platform branching.
  */
 export interface NitroOcr extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+  /**
+   * Run MLKit Text Recognition synchronously on a single vision-camera v5
+   * frame. Invoke from inside a `useFrameOutput` worklet and throttle callers.
+   */
   recognize(frame: Frame): OcrResult
+
+  /**
+   * Run MLKit Text Recognition on a local image path. This is intended for
+   * flows that first crop/dewarp a camera frame into a label image, then OCR
+   * the saved file outside the hot camera frame loop.
+   *
+   * Supported orientation strings: up, down, left, right, upMirrored,
+   * downMirrored, leftMirrored, rightMirrored, portrait,
+   * portraitUpsideDown, landscapeLeft, landscapeRight.
+   */
+  recognizeImage(imagePath: string, orientation?: string): OcrResult
 }

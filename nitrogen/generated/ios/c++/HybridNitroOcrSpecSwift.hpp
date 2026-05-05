@@ -34,6 +34,7 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 #include "BoundingBox.hpp"
 #include <memory>
 #include <VisionCamera/HybridFrameSpec.hpp>
+#include <optional>
 
 #include "VisionCameraNitroOcr-Swift-Cxx-Umbrella.hpp"
 
@@ -87,6 +88,14 @@ namespace margelo::nitro::nitroocr {
     // Methods
     inline OcrResult recognize(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) override {
       auto __result = _swiftPart.recognize(frame);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline OcrResult recognizeImage(const std::string& imagePath, const std::optional<std::string>& orientation) override {
+      auto __result = _swiftPart.recognizeImage(imagePath, orientation);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

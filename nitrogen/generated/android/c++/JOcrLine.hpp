@@ -42,16 +42,16 @@ namespace margelo::nitro::nitroocr {
       jni::local_ref<jni::JArrayClass<JOcrElement>> elements = this->getFieldValue(fieldElements);
       return OcrLine(
         text->toStdString(),
-        [&]() {
-          size_t __size = elements->size();
+        [&](auto&& __input) {
+          size_t __size = __input->size();
           std::vector<OcrElement> __vector;
           __vector.reserve(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            auto __element = elements->getElement(__i);
+            auto __element = __input->getElement(__i);
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }()
+        }(elements)
       );
     }
 
@@ -67,16 +67,16 @@ namespace margelo::nitro::nitroocr {
       return create(
         clazz,
         jni::make_jstring(value.text),
-        [&]() {
-          size_t __size = value.elements.size();
+        [&](auto&& __input) {
+          size_t __size = __input.size();
           jni::local_ref<jni::JArrayClass<JOcrElement>> __array = jni::JArrayClass<JOcrElement>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = value.elements[__i];
+            const auto& __element = __input[__i];
             auto __elementJni = JOcrElement::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }()
+        }(value.elements)
       );
     }
   };

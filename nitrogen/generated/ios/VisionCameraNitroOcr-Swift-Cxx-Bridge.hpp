@@ -40,6 +40,7 @@ namespace VisionCameraNitroOcr { class HybridNitroOcrSpec_cxx; }
 #include <VisionCamera/HybridFrameSpec.hpp>
 #include <exception>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -59,7 +60,7 @@ namespace margelo::nitro::nitroocr::bridge::swift {
     vector.reserve(size);
     return vector;
   }
-  
+
   // pragma MARK: std::vector<OcrLine>
   /**
    * Specialized version of `std::vector<OcrLine>`.
@@ -70,7 +71,7 @@ namespace margelo::nitro::nitroocr::bridge::swift {
     vector.reserve(size);
     return vector;
   }
-  
+
   // pragma MARK: std::vector<OcrBlock>
   /**
    * Specialized version of `std::vector<OcrBlock>`.
@@ -81,7 +82,7 @@ namespace margelo::nitro::nitroocr::bridge::swift {
     vector.reserve(size);
     return vector;
   }
-  
+
   // pragma MARK: std::vector<std::string>
   /**
    * Specialized version of `std::vector<std::string>`.
@@ -92,7 +93,7 @@ namespace margelo::nitro::nitroocr::bridge::swift {
     vector.reserve(size);
     return vector;
   }
-  
+
   // pragma MARK: std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>
   /**
    * Specialized version of `std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>`.
@@ -100,11 +101,26 @@ namespace margelo::nitro::nitroocr::bridge::swift {
   using std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_ = std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>;
   std::shared_ptr<margelo::nitro::camera::HybridFrameSpec> create_std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
   void* NON_NULL get_std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_ cppType);
-  
+
   // pragma MARK: std::weak_ptr<margelo::nitro::camera::HybridFrameSpec>
   using std__weak_ptr_margelo__nitro__camera__HybridFrameSpec_ = std::weak_ptr<margelo::nitro::camera::HybridFrameSpec>;
   inline std__weak_ptr_margelo__nitro__camera__HybridFrameSpec_ weakify_std__shared_ptr_margelo__nitro__camera__HybridFrameSpec_(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& strong) noexcept { return strong; }
-  
+
+  // pragma MARK: std::optional<std::string>
+  /**
+   * Specialized version of `std::optional<std::string>`.
+   */
+  using std__optional_std__string_ = std::optional<std::string>;
+  inline std::optional<std::string> create_std__optional_std__string_(const std::string& value) noexcept {
+    return std::optional<std::string>(value);
+  }
+  inline bool has_value_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::string get_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
+    return optional.value();
+  }
+
   // pragma MARK: std::shared_ptr<HybridNitroOcrSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridNitroOcrSpec>`.
@@ -112,11 +128,11 @@ namespace margelo::nitro::nitroocr::bridge::swift {
   using std__shared_ptr_HybridNitroOcrSpec_ = std::shared_ptr<HybridNitroOcrSpec>;
   std::shared_ptr<HybridNitroOcrSpec> create_std__shared_ptr_HybridNitroOcrSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
   void* NON_NULL get_std__shared_ptr_HybridNitroOcrSpec_(std__shared_ptr_HybridNitroOcrSpec_ cppType);
-  
+
   // pragma MARK: std::weak_ptr<HybridNitroOcrSpec>
   using std__weak_ptr_HybridNitroOcrSpec_ = std::weak_ptr<HybridNitroOcrSpec>;
   inline std__weak_ptr_HybridNitroOcrSpec_ weakify_std__shared_ptr_HybridNitroOcrSpec_(const std::shared_ptr<HybridNitroOcrSpec>& strong) noexcept { return strong; }
-  
+
   // pragma MARK: Result<OcrResult>
   using Result_OcrResult_ = Result<OcrResult>;
   inline Result_OcrResult_ create_Result_OcrResult_(const OcrResult& value) noexcept {

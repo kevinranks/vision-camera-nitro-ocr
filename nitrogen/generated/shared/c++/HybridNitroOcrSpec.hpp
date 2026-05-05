@@ -21,6 +21,8 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 #include "OcrResult.hpp"
 #include <memory>
 #include <VisionCamera/HybridFrameSpec.hpp>
+#include <string>
+#include <optional>
 
 namespace margelo::nitro::nitroocr {
 
@@ -54,6 +56,7 @@ namespace margelo::nitro::nitroocr {
     public:
       // Methods
       virtual OcrResult recognize(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) = 0;
+      virtual OcrResult recognizeImage(const std::string& imagePath, const std::optional<std::string>& orientation) = 0;
 
     protected:
       // Hybrid Setup

@@ -1,6 +1,6 @@
 # @kpaterson/vision-camera-nitro-ocr
 
-Nitro Modules OCR plugin for [react-native-vision-camera v5](https://visioncamera.margelo.com). Uses MLKit Text Recognition on both iOS and Android, exposed as a single Nitro `HybridObject` with a `recognize(frame)` method.
+Nitro Modules OCR plugin for [react-native-vision-camera v5](https://visioncamera.margelo.com). Uses MLKit Text Recognition on both iOS and Android, exposed as a single Nitro `HybridObject` with frame and still-image recognition methods.
 
 ## Usage
 
@@ -24,6 +24,21 @@ const frameOutput = useFrameOutput({
   },
 });
 ```
+
+For cropped or dewarped still images, pass a local file path to `recognizeImage`:
+
+```ts
+import { useOcr } from "@kpaterson/vision-camera-nitro-ocr";
+
+const ocr = useOcr();
+
+const result = ocr.recognizeImage(labelImagePath, "up");
+```
+
+The optional orientation argument accepts `up`, `down`, `left`, `right`,
+`upMirrored`, `downMirrored`, `leftMirrored`, `rightMirrored`, `portrait`,
+`portraitUpsideDown`, `landscapeLeft`, or `landscapeRight`. Omit it when the
+saved image is already upright.
 
 ## Output shape
 

@@ -55,6 +55,7 @@ namespace margelo::nitro::nitroocr {
   public:
     // Methods
     OcrResult recognize(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) override;
+    OcrResult recognizeImage(const std::string& imagePath, const std::optional<std::string>& orientation) override;
 
   private:
     jni::global_ref<JHybridNitroOcrSpec::JavaPart> _javaPart;

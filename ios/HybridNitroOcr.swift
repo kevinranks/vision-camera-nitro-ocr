@@ -10,6 +10,7 @@ import Foundation
 import MLKitTextRecognition
 import MLKitVision
 import NitroModules
+import UIKit
 import VisionCamera
 
 class HybridNitroOcr: HybridNitroOcrSpec {
@@ -29,13 +30,34 @@ class HybridNitroOcr: HybridNitroOcrSpec {
       image = try frame.toMLImage()
     } catch {
       NSLog("[NitroOcr] toMLImage failed: \(error.localizedDescription)")
-      return OcrResult(text: "", blocks: [], lines: [])
+      return Self.emptyResult()
     }
 
+    return self.recognize(image: image, source: "frame")
+  }
+
+  /// Synchronously run MLKit on a saved image file. This keeps expensive OCR
+  /// out of the live frame loop for crop/dewarp flows.
+  func recognizeImage(imagePath: String, orientation: String?) throws -> OcrResult {
+    let normalizedPath = Self.normalizedImagePath(imagePath)
+    guard let uiImage = UIImage(contentsOfFile: normalizedPath) else {
+      NSLog("[NitroOcr] failed to load image at path: \(normalizedPath)")
+      return Self.emptyResult()
+    }
+    guard let image = MLImage(image: uiImage) else {
+      NSLog("[NitroOcr] failed to create MLImage from path: \(normalizedPath)")
+      return Self.emptyResult()
+    }
+
+    image.orientation = Self.imageOrientation(from: orientation)
+    return self.recognize(image: image, source: "image")
+  }
+
+  private func recognize(image: MLImage, source: String) -> OcrResult {
     do {
       let text = try self.textRecognizer.results(in: image)
       if text.text.isEmpty {
-        return OcrResult(text: "", blocks: [], lines: [])
+        return Self.emptyResult()
       }
       let blocks = text.blocks.map(Self.mapBlock)
       let allElements = blocks.flatMap { block in block.lines.flatMap { $0.elements } }
@@ -43,8 +65,40 @@ class HybridNitroOcr: HybridNitroOcrSpec {
     } catch {
       // Match v4 fork behavior: swallow and return empty on error to keep
       // the camera alive; consumers treat empty results as "nothing recognized".
-      NSLog("[NitroOcr] recognize failed: \(error.localizedDescription)")
-      return OcrResult(text: "", blocks: [], lines: [])
+      NSLog("[NitroOcr] recognize \(source) failed: \(error.localizedDescription)")
+      return Self.emptyResult()
+    }
+  }
+
+  private static func emptyResult() -> OcrResult {
+    OcrResult(text: "", blocks: [], lines: [])
+  }
+
+  private static func normalizedImagePath(_ imagePath: String) -> String {
+    if imagePath.hasPrefix("file://"), let url = URL(string: imagePath) {
+      return url.path
+    }
+    return imagePath
+  }
+
+  private static func imageOrientation(from value: String?) -> UIImage.Orientation {
+    switch value?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+    case "down", "portraitupsidedown":
+      return .down
+    case "left", "landscapeleft":
+      return .left
+    case "right", "landscaperight":
+      return .right
+    case "upmirrored":
+      return .upMirrored
+    case "downmirrored":
+      return .downMirrored
+    case "leftmirrored":
+      return .leftMirrored
+    case "rightmirrored":
+      return .rightMirrored
+    default:
+      return .up
     }
   }
 

@@ -1,9 +1,11 @@
 package com.margelo.nitro.nitroocr
 
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
 import com.google.android.gms.tasks.Tasks
+import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
@@ -33,6 +35,24 @@ class HybridNitroOcr : HybridNitroOcrSpec() {
       return empty()
     }
 
+    return recognizeInputImage(inputImage, "frame")
+    // NOTE: vision-camera's worklet pipeline owns the ImageProxy lifecycle;
+    // it is closed when the worklet returns. Do NOT close anything here.
+  }
+
+  override fun recognizeImage(imagePath: String, orientation: String?): OcrResult {
+    val normalizedPath = normalizeImagePath(imagePath)
+    val bitmap = BitmapFactory.decodeFile(normalizedPath)
+    if (bitmap == null) {
+      Log.w(TAG, "failed to load image at path: $normalizedPath")
+      return empty()
+    }
+
+    val inputImage = InputImage.fromBitmap(bitmap, rotationDegreesFromOrientation(orientation))
+    return recognizeInputImage(inputImage, "image")
+  }
+
+  private fun recognizeInputImage(inputImage: InputImage, source: String): OcrResult {
     return try {
       val text = Tasks.await(recognizer.process(inputImage))
       if (text.text.isEmpty()) empty()
@@ -47,11 +67,9 @@ class HybridNitroOcr : HybridNitroOcrSpec() {
       }
     } catch (e: Exception) {
       // Match v4 fork behavior: swallow and return empty on error.
-      Log.w(TAG, "recognize failed", e)
+      Log.w(TAG, "recognize $source failed", e)
       empty()
     }
-    // NOTE: vision-camera's worklet pipeline owns the ImageProxy lifecycle;
-    // it is closed when the worklet returns. Do NOT close anything here.
   }
 
   private fun empty() = OcrResult(
@@ -59,6 +77,18 @@ class HybridNitroOcr : HybridNitroOcrSpec() {
     blocks = emptyArray(),
     lines = emptyArray()
   )
+
+  private fun normalizeImagePath(imagePath: String): String =
+    imagePath.removePrefix("file://")
+
+  private fun rotationDegreesFromOrientation(orientation: String?): Int {
+    return when (orientation?.trim()?.lowercase()) {
+      "right", "landscaperight" -> 90
+      "down", "portraitupsidedown" -> 180
+      "left", "landscapeleft" -> 270
+      else -> 0
+    }
+  }
 
   // MARK: MLKit → Ocr mapping
 

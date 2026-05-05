@@ -35,6 +35,7 @@ namespace margelo::nitro::camera { class HybridFrameSpec; }
 #include <memory>
 #include <VisionCamera/HybridFrameSpec.hpp>
 #include <VisionCamera/JHybridFrameSpec.hpp>
+#include <optional>
 
 namespace margelo::nitro::nitroocr {
 
@@ -72,6 +73,11 @@ namespace margelo::nitro::nitroocr {
   OcrResult JHybridNitroOcrSpec::recognize(const std::shared_ptr<margelo::nitro::camera::HybridFrameSpec>& frame) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JOcrResult>(jni::alias_ref<margelo::nitro::camera::JHybridFrameSpec::JavaPart> /* frame */)>("recognize");
     auto __result = method(_javaPart, std::dynamic_pointer_cast<margelo::nitro::camera::JHybridFrameSpec>(frame)->getJavaPart());
+    return __result->toCpp();
+  }
+  OcrResult JHybridNitroOcrSpec::recognizeImage(const std::string& imagePath, const std::optional<std::string>& orientation) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JOcrResult>(jni::alias_ref<jni::JString> /* imagePath */, jni::alias_ref<jni::JString> /* orientation */)>("recognizeImage");
+    auto __result = method(_javaPart, jni::make_jstring(imagePath), orientation.has_value() ? jni::make_jstring(orientation.value()) : nullptr);
     return __result->toCpp();
   }
 

@@ -26,12 +26,16 @@ import com.margelo.nitro.core.HybridObject
 )
 abstract class HybridNitroOcrSpec: HybridObject() {
   // Properties
-  
+
 
   // Methods
   @DoNotStrip
   @Keep
   abstract fun recognize(frame: com.margelo.nitro.camera.HybridFrameSpec): OcrResult
+
+  @DoNotStrip
+  @Keep
+  abstract fun recognizeImage(imagePath: String, orientation: String?): OcrResult
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

@@ -15,6 +15,7 @@ public protocol HybridNitroOcrSpec_protocol: HybridObject {
 
   // Methods
   func recognize(frame: (any HybridFrameSpec)) throws -> OcrResult
+  func recognizeImage(imagePath: String, orientation: String?) throws -> OcrResult
 }
 
 public extension HybridNitroOcrSpec_protocol {

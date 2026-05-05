@@ -34,6 +34,7 @@ namespace margelo::nitro::nitroocr { struct OcrResult; }
 #include <VisionCamera/HybridFrameSpec.hpp>
 #include <exception>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
