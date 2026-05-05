@@ -1,0 +1,118 @@
+buildscript {
+  ext.safeExtGet = { prop, fallback ->
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+  }
+  repositories {
+    google()
+    mavenCentral()
+  }
+  dependencies {
+    classpath "com.android.tools.build:gradle:8.6.0"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', '1.9.24')}"
+  }
+}
+
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply from: '../nitrogen/generated/android/NitroOcr+autolinking.gradle'
+apply from: "./fix-prefab.gradle"
+
+// Inherit the consumer app's ABI selection. RN's gradle plugin sets this
+// per-build via the `reactNativeArchitectures` property — typically just the
+// connected device's ABI for `react-native run-android`. Falls back to all
+// 4 ABIs if the property isn't set (matches what the barcode-scanner plugin
+// does — see node_modules/react-native-vision-camera-barcode-scanner/android/build.gradle).
+def reactNativeArchitectures() {
+  def value = rootProject.getProperties().get("reactNativeArchitectures")
+  return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+}
+
+android {
+  namespace "com.visioncameranitroocr"
+  compileSdk safeExtGet('compileSdkVersion', 34)
+
+  defaultConfig {
+    minSdkVersion safeExtGet('minSdkVersion', 23)
+    targetSdkVersion safeExtGet('targetSdkVersion', 34)
+    buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", "true"
+
+    externalNativeBuild {
+      cmake {
+        cppFlags "-O2 -frtti -fexceptions -Wall -Wno-unused-variable -fstack-protector-all"
+        arguments "-DANDROID_STL=c++_shared", "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+        // Match the consumer app's ABI selection (set per-build via the
+        // `reactNativeArchitectures` Gradle property; defaults to all 4 when
+        // unset). Hardcoding all 4 ABIs here forced the plugin to link for
+        // ABIs the consumer's other Nitro plugins (NitroModules, VisionCamera)
+        // didn't build for, producing "undefined symbol" linker errors.
+        abiFilters (*reactNativeArchitectures())
+      }
+    }
+  }
+
+  externalNativeBuild {
+    cmake {
+      path "CMakeLists.txt"
+    }
+  }
+
+  packagingOptions {
+    excludes = [
+      "META-INF",
+      "META-INF/**",
+      "**/libc++_shared.so",
+      "**/libNitroModules.so",
+      "**/libfbjni.so",
+      "**/libjsi.so",
+      "**/libfolly_json.so",
+      "**/libfolly_runtime.so",
+      "**/libglog.so",
+      "**/libhermes.so",
+      "**/libhermes-executor-debug.so",
+      "**/libhermes_executor.so",
+      "**/libreactnative.so",
+      "**/libreactnativejni.so",
+      "**/libturbomodulejsijni.so",
+      "**/libreact_nativemodule_core.so",
+      "**/libjscexecutor.so",
+    ]
+  }
+
+  buildFeatures {
+    buildConfig true
+    prefab true
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+
+  kotlinOptions {
+    jvmTarget = JavaVersion.VERSION_17.toString()
+  }
+}
+
+repositories {
+  google()
+  mavenCentral()
+}
+
+dependencies {
+  //noinspection GradleDynamicVersion
+  implementation "com.facebook.react:react-native:+"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:${safeExtGet('kotlinVersion', '1.9.24')}"
+
+  // androidx.camera.core — we use ExperimentalGetImage from ImageProxy to
+  // pull the underlying android.media.Image for MLKit.
+  implementation "androidx.camera:camera-core:1.7.0-alpha01"
+
+  // MLKit Text Recognition — Play Services variant (no full MLKit model
+  // bundled; pulled on first use). Matches the patch applied to the v4 fork,
+  // but baked in natively here.
+  implementation "com.google.android.gms:play-services-mlkit-text-recognition:19.0.1"
+
+  // NitroModules + VisionCamera (for HybridFrameSpec, NativeFrame, etc.)
+  implementation project(":react-native-nitro-modules")
+  implementation project(":react-native-vision-camera")
+}

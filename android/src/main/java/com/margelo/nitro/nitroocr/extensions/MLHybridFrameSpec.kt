@@ -1,0 +1,21 @@
+package com.margelo.nitro.nitroocr.extensions
+
+import androidx.annotation.OptIn
+import androidx.camera.core.ExperimentalGetImage
+import com.google.mlkit.vision.common.InputImage
+import com.margelo.nitro.camera.HybridFrameSpec
+import com.margelo.nitro.camera.public.NativeFrame
+
+/**
+ * Convert a Nitro v5 `HybridFrameSpec` into an MLKit `InputImage`.
+ * Ported verbatim from the vision-camera-barcode-scanner extension — the
+ * canonical v5 pattern for any frame-processor MLKit plugin.
+ */
+@OptIn(ExperimentalGetImage::class)
+fun HybridFrameSpec.toInputImage(): InputImage {
+  val frame = this as? NativeFrame
+    ?: throw Error("Frame is not of type `NativeFrame`!")
+  val mediaImage = frame.image.image
+    ?: throw Error("Frame does not have an underlying `Image`!")
+  return InputImage.fromMediaImage(mediaImage, frame.image.imageInfo.rotationDegrees)
+}

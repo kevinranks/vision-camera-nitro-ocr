@@ -1,0 +1,46 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.json
+
+# Build
+lib/
+build/
+dist/
+*.tgz
+
+# iOS
+ios/Pods/
+ios/build/
+ios/*.xcworkspace
+ios/DerivedData/
+ios/.xcode.env.local
+
+# Android
+android/.gradle/
+android/.cxx/
+android/build/
+android/local.properties
+android/app/build/
+*.iml
+
+# Example app generated
+example/node_modules/
+example/ios/Pods/
+example/ios/build/
+example/ios/DerivedData/
+example/ios/*.xcworkspace
+example/android/.gradle/
+example/android/build/
+example/android/app/build/
+example/android/local.properties
+
+# Editor
+.idea/
+.vscode/
+.DS_Store
+
+# IMPORTANT: DO commit nitrogen/generated/
+# (do NOT add it to .gitignore — consumers install via GitHub tarball and won't regenerate)
