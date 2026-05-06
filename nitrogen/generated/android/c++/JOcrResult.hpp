@@ -48,26 +48,26 @@ namespace margelo::nitro::nitroocr {
       jni::local_ref<jni::JArrayClass<jni::JString>> lines = this->getFieldValue(fieldLines);
       return OcrResult(
         text->toStdString(),
-        [&](auto&& __input) {
-          size_t __size = __input->size();
+        [&]() {
+          size_t __size = blocks->size();
           std::vector<OcrBlock> __vector;
           __vector.reserve(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            auto __element = __input->getElement(__i);
+            auto __element = blocks->getElement(__i);
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(blocks),
-        [&](auto&& __input) {
-          size_t __size = __input->size();
+        }(),
+        [&]() {
+          size_t __size = lines->size();
           std::vector<std::string> __vector;
           __vector.reserve(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            auto __element = __input->getElement(__i);
+            auto __element = lines->getElement(__i);
             __vector.push_back(__element->toStdString());
           }
           return __vector;
-        }(lines)
+        }()
       );
     }
 
@@ -83,26 +83,26 @@ namespace margelo::nitro::nitroocr {
       return create(
         clazz,
         jni::make_jstring(value.text),
-        [&](auto&& __input) {
-          size_t __size = __input.size();
+        [&]() {
+          size_t __size = value.blocks.size();
           jni::local_ref<jni::JArrayClass<JOcrBlock>> __array = jni::JArrayClass<JOcrBlock>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = __input[__i];
+            const auto& __element = value.blocks[__i];
             auto __elementJni = JOcrBlock::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(value.blocks),
-        [&](auto&& __input) {
-          size_t __size = __input.size();
+        }(),
+        [&]() {
+          size_t __size = value.lines.size();
           jni::local_ref<jni::JArrayClass<jni::JString>> __array = jni::JArrayClass<jni::JString>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
-            const auto& __element = __input[__i];
+            const auto& __element = value.lines[__i];
             auto __elementJni = jni::make_jstring(__element);
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(value.lines)
+        }()
       );
     }
   };

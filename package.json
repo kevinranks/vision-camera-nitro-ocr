@@ -47,10 +47,10 @@
   "devDependencies": {
     "@types/react": "19.1.1",
     "@types/react-native": "0.72.0",
-    "nitrogen": "0.35.6",
+    "nitrogen": "0.35.4",
     "react": "19.1.1",
     "react-native": "0.82.1",
-    "react-native-nitro-modules": "0.35.6",
+    "react-native-nitro-modules": "0.35.4",
     "react-native-vision-camera": "^5.0.4",
     "typescript": "^5.4.0"
   }

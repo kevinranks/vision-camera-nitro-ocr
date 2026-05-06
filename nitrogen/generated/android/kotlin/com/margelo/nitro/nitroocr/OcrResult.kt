@@ -9,7 +9,6 @@ package com.margelo.nitro.nitroocr
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
-import java.util.Objects
 
 
 /**
@@ -29,22 +28,6 @@ data class OcrResult(
   val lines: Array<String>
 ) {
   /* primary constructor */
-
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (other !is OcrResult) return false
-    return Objects.deepEquals(this.text, other.text)
-      && Objects.deepEquals(this.blocks, other.blocks)
-      && Objects.deepEquals(this.lines, other.lines)
-  }
-
-  override fun hashCode(): Int {
-    return arrayOf(
-      text,
-      blocks,
-      lines
-    ).contentDeepHashCode()
-  }
 
   companion object {
     /**

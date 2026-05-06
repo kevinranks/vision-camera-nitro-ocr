@@ -9,7 +9,6 @@ package com.margelo.nitro.nitroocr
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
-import java.util.Objects
 
 
 /**
@@ -26,20 +25,6 @@ data class OcrElement(
   val boundingBox: BoundingBox
 ) {
   /* primary constructor */
-
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (other !is OcrElement) return false
-    return Objects.deepEquals(this.text, other.text)
-      && Objects.deepEquals(this.boundingBox, other.boundingBox)
-  }
-
-  override fun hashCode(): Int {
-    return arrayOf(
-      text,
-      boundingBox
-    ).contentDeepHashCode()
-  }
 
   companion object {
     /**
