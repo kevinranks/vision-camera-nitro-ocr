@@ -2,8 +2,8 @@
   "name": "@kpaterson/vision-camera-nitro-ocr",
   "version": "0.1.6",
   "description": "Nitro Modules OCR plugin for react-native-vision-camera v5 (MLKit on iOS+Android)",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "react-native": "src/index.ts",
   "source": "src/index.ts",
   "files": [
@@ -22,7 +22,7 @@
     "build": "rm -rf lib && tsc",
     "clean": "rm -rf lib android/build android/.cxx ios/build",
     "nitrogen": "nitrogen",
-    "prepack": "yarn build"
+    "prepack": "true"
   },
   "keywords": [
     "react-native",
@@ -38,11 +38,12 @@
   },
   "author": "Kevin P <contact@kpaterson.com>",
   "license": "MIT",
+  "packageManager": "yarn@4.6.0",
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-vision-camera": ">=5.0.0",
-    "react-native-nitro-modules": "*"
+    "react-native-nitro-modules": "*",
+    "react-native-vision-camera": ">=5.0.0"
   },
   "devDependencies": {
     "@types/react": "19.1.1",
